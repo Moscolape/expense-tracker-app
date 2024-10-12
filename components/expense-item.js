@@ -1,14 +1,27 @@
 import React from "react";
 import { View, Text, StyleSheet, Pressable } from "react-native";
 import { GlobalColors } from "../constants/colors";
+import { useNavigation } from "@react-navigation/native";
 
-const ExpenseItem = ({ description, amount, date }) => {
+const ExpenseItem = ({ id, description, amount, date }) => {
   const getFormattedDate = () => {
-    return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
-  }
+    return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+  };
+
+  const navigation = useNavigation();
+
+  const expensePressedHandler = () => {
+    // @ts-ignore
+    navigation.navigate('ManageExpense', {
+      expenseId: id
+    });
+  };
 
   return (
-    <Pressable>
+    <Pressable
+      onPress={expensePressedHandler}
+      style={({ pressed }) => pressed && styles.pressed}
+    >
       <View style={styles.expense}>
         <View>
           <Text style={styles.desc}>{description}</Text>
@@ -25,13 +38,16 @@ const ExpenseItem = ({ description, amount, date }) => {
 export default ExpenseItem;
 
 const styles = StyleSheet.create({
+  pressed: {
+    opacity: 0.5,
+  },
   expense: {
     padding: 12,
     marginVertical: 8,
     backgroundColor: GlobalColors.colors.primary500,
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: 'center',
+    alignItems: "center",
     borderRadius: 6,
     elevation: 3,
     // iOS shadow
@@ -55,6 +71,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 4,
     fontWeight: "bold",
-    backgroundColor: GlobalColors.colors.primary50
+    backgroundColor: GlobalColors.colors.primary50,
   },
 });

@@ -85,6 +85,6 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 16,
     paddingTop: 16,
-    backgroundColor: GlobalColors.colors.primary400
+    backgroundColor: GlobalColors.colors.primary700
   },
 });
