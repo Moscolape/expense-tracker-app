@@ -1,21 +1,27 @@
-import React from "react";
-import { useLayoutEffect } from "react";
-import { StyleSheet, View } from "react-native";
-import IconButton from "../components/ui/icon-button";
-import { GlobalColors } from "../constants/colors";
-import Button from "../components/ui/button";
+import React, { useContext, useLayoutEffect } from 'react';
+import { View, StyleSheet } from 'react-native';
+import { ExpensesContext } from '../store/expenses-context';
+import IconButton from '../components/ui/icon-button';
+import { GlobalColors } from '../constants/colors';
+import Button from '../components/ui/button';
 
 function ManageExpense({ route, navigation }) {
+  const { addExpense, updateExpense, deleteExpense, expenses } = useContext(ExpensesContext);
+
   const editedExpenseId = route.params?.expenseId;
   const isEditing = !!editedExpenseId;
 
+  // @ts-ignore
+  // const selectedExpense = expenses.find((expense) => expense.id === editedExpenseId);
+
   useLayoutEffect(() => {
     navigation.setOptions({
-      title: isEditing ? "Edit Expense" : "Add Expense",
+      title: isEditing ? 'Edit Expense' : 'Add Expense',
     });
   }, [navigation, isEditing]);
 
   function deleteExpenseHandler() {
+    deleteExpense(editedExpenseId);
     navigation.goBack();
   }
 
@@ -23,7 +29,12 @@ function ManageExpense({ route, navigation }) {
     navigation.goBack();
   }
 
-  function confirmHandler() {
+  function saveHandler() {
+    if (isEditing) {
+      updateExpense(editedExpenseId, { description: 'Updated description', amount: 100.00, date: new Date() });
+    } else {
+      addExpense({ description: 'New expense', amount: 50.00, date: new Date() });
+    }
     navigation.goBack();
   }
 
@@ -33,8 +44,8 @@ function ManageExpense({ route, navigation }) {
         <Button style={styles.button} mode="flat" onPress={cancelHandler}>
           Cancel
         </Button>
-        <Button style={styles.button} mode="" onPress={confirmHandler}>
-          {isEditing ? "Update" : "Add"}
+        <Button style={styles.button} mode="" onPress={saveHandler}>
+          {isEditing ? 'Update' : 'Add'}
         </Button>
       </View>
       {isEditing && (
@@ -60,9 +71,9 @@ const styles = StyleSheet.create({
     backgroundColor: GlobalColors.colors.primary700,
   },
   buttons: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   button: {
     minWidth: 120,
@@ -73,6 +84,6 @@ const styles = StyleSheet.create({
     paddingTop: 8,
     borderTopWidth: 2,
     borderTopColor: GlobalColors.colors.primary200,
-    alignItems: "center",
+    alignItems: 'center',
   },
 });
