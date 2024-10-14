@@ -5,7 +5,8 @@ import { useNavigation } from "@react-navigation/native";
 
 const ExpenseItem = ({ id, description, amount, date }) => {
   const getFormattedDate = () => {
-    return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+    // return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+    return date.toISOString().slice(0,10);
   };
 
   const navigation = useNavigation();
