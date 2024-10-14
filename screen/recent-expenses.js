@@ -2,12 +2,13 @@ import React, { useContext, useEffect } from 'react';
 import { ExpensesContext } from '../store/expenses-context';
 import ExpensesOutput from '../components/expenses-output';
 import LoadingOverlay from '../components/ui/loader';
+import ErrorOverlay from '../components/ui/error-happened';
 
 const RecentExpenses = () => {
   const expensesCtx = useContext(ExpensesContext);
 
   useEffect(() => {
-    expensesCtx.fetchExpenses(); // Fetch expenses from context
+    expensesCtx.fetchExpenses();
   }, []);
 
   const recentExpenses = expensesCtx.expenses.filter((expense) => {
@@ -19,6 +20,10 @@ const RecentExpenses = () => {
 
   if (expensesCtx.loading) {
     return <LoadingOverlay />;
+  }
+
+  if (expensesCtx.error) {
+    return <ErrorOverlay message={expensesCtx.error} />;
   }
 
   return (

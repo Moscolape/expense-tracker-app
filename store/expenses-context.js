@@ -1,7 +1,5 @@
 import React, { createContext, useReducer, useEffect, useState } from 'react';
-
-// @ts-ignore
-import { getExpenses, updateExpense as updateExpenseApi, deleteExpense as deleteExpenseApi } from '../api/requests'; 
+import { getExpenses, updateExpense as updateExpenseApi, deleteExpense as deleteExpenseApi } from '../api/requests';
 
 export const ExpensesContext = createContext({
   expenses: [],
@@ -14,7 +12,8 @@ export const ExpensesContext = createContext({
   // @ts-ignore
   setExpenses: (expenses) => {},
   fetchExpenses: () => {},
-  loading: false
+  loading: false,
+  error: null
 });
 
 function expensesReducer(state, action) {
@@ -39,6 +38,7 @@ function expensesReducer(state, action) {
 function ExpensesContextProvider({ children }) {
   const [expensesState, dispatch] = useReducer(expensesReducer, []);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null); 
 
   function addExpense(expenseData) {
     // @ts-ignore
@@ -46,15 +46,29 @@ function ExpensesContextProvider({ children }) {
   }
 
   async function deleteExpense(id) {
-    await deleteExpenseApi(id);
-    // @ts-ignore
-    dispatch({ type: 'DELETE', payload: id });
+    setLoading(true);
+    try {
+      await deleteExpenseApi(id);
+      // @ts-ignore
+      dispatch({ type: 'DELETE', payload: id });
+    } catch (err) {
+      // @ts-ignore
+      setError('Could not delete the expense!');
+    }
+    setLoading(false);
   }
 
   async function updateExpense(id, expenseData) {
-    await updateExpenseApi(id, expenseData);
-    // @ts-ignore
-    dispatch({ type: 'UPDATE', payload: { id, data: expenseData } });
+    setLoading(true);
+    try {
+      await updateExpenseApi(id, expenseData);
+      // @ts-ignore
+      dispatch({ type: 'UPDATE', payload: { id, data: expenseData } });
+    } catch (err) {
+      // @ts-ignore
+      setError('Could not update the expense!');
+    }
+    setLoading(false);
   }
 
   function setExpenses(expenses) {
@@ -64,8 +78,14 @@ function ExpensesContextProvider({ children }) {
 
   async function fetchExpenses() {
     setLoading(true);
-    const fetchedExpenses = await getExpenses();
-    setExpenses(fetchedExpenses);
+    setError(null);
+    try {
+      const fetchedExpenses = await getExpenses();
+      setExpenses(fetchedExpenses);
+    } catch (err) {
+      // @ts-ignore
+      setError('Could not fetch expenses!');
+    }
     setLoading(false);
   }
 
@@ -80,7 +100,8 @@ function ExpensesContextProvider({ children }) {
     updateExpense,
     setExpenses,
     fetchExpenses,
-    loading
+    loading,
+    error
   };
 
   return (
