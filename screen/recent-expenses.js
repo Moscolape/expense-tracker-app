@@ -1,6 +1,7 @@
 import React, { useContext, useEffect } from 'react';
 import { ExpensesContext } from '../store/expenses-context';
 import ExpensesOutput from '../components/expenses-output';
+import LoadingOverlay from '../components/ui/loader';
 
 const RecentExpenses = () => {
   const expensesCtx = useContext(ExpensesContext);
@@ -15,6 +16,10 @@ const RecentExpenses = () => {
     // @ts-ignore
     return expense.date > date7DaysAgo;
   });
+
+  if (expensesCtx.loading) {
+    return <LoadingOverlay />;
+  }
 
   return (
     <ExpensesOutput

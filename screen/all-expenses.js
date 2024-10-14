@@ -1,6 +1,7 @@
 import React, { useContext, useEffect } from 'react';
 import { ExpensesContext } from '../store/expenses-context';
 import ExpensesOutput from '../components/expenses-output';
+import LoadingOverlay from '../components/ui/loader';
 
 const AllExpenses = () => {
   const expensesCtx = useContext(ExpensesContext);
@@ -8,6 +9,10 @@ const AllExpenses = () => {
   useEffect(() => {
     expensesCtx.fetchExpenses();
   }, []);
+
+  if (expensesCtx.loading) {
+    return <LoadingOverlay />;
+  }
 
   return (
     <ExpensesOutput

@@ -1,4 +1,4 @@
-import React, { createContext, useReducer, useEffect } from 'react';
+import React, { createContext, useReducer, useEffect, useState } from 'react';
 
 // @ts-ignore
 import { getExpenses, updateExpense as updateExpenseApi, deleteExpense as deleteExpenseApi } from '../api/requests'; 
@@ -13,7 +13,8 @@ export const ExpensesContext = createContext({
   updateExpense: (id, expenseData) => {},
   // @ts-ignore
   setExpenses: (expenses) => {},
-  fetchExpenses: () => {}
+  fetchExpenses: () => {},
+  loading: false
 });
 
 function expensesReducer(state, action) {
@@ -37,6 +38,7 @@ function expensesReducer(state, action) {
 
 function ExpensesContextProvider({ children }) {
   const [expensesState, dispatch] = useReducer(expensesReducer, []);
+  const [loading, setLoading] = useState(false);
 
   function addExpense(expenseData) {
     // @ts-ignore
@@ -61,8 +63,10 @@ function ExpensesContextProvider({ children }) {
   }
 
   async function fetchExpenses() {
+    setLoading(true);
     const fetchedExpenses = await getExpenses();
     setExpenses(fetchedExpenses);
+    setLoading(false);
   }
 
   useEffect(() => {
@@ -75,7 +79,8 @@ function ExpensesContextProvider({ children }) {
     deleteExpense,
     updateExpense,
     setExpenses,
-    fetchExpenses
+    fetchExpenses,
+    loading
   };
 
   return (
