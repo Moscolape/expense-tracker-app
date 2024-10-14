@@ -1,10 +1,13 @@
-import React, { useContext, useLayoutEffect } from 'react';
-import { View, StyleSheet } from 'react-native';
+import React, { useContext, useEffect } from 'react';
 import { ExpensesContext } from '../store/expenses-context';
 import ExpensesOutput from '../components/expenses-output';
 
-const AllExpenses = ({navigation}) => {
+const AllExpenses = () => {
   const expensesCtx = useContext(ExpensesContext);
+
+  useEffect(() => {
+    expensesCtx.fetchExpenses();
+  }, []);
 
   return (
     <ExpensesOutput
@@ -16,9 +19,3 @@ const AllExpenses = ({navigation}) => {
 };
 
 export default AllExpenses;
-
-const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-  },
-});

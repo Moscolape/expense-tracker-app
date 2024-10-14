@@ -3,7 +3,7 @@ import { View, StyleSheet } from "react-native";
 import { ExpensesContext } from "../store/expenses-context";
 import IconButton from "../components/ui/icon-button";
 import { GlobalColors } from "../constants/colors";
-import Button from "../components/ui/button";
+
 import ExpenseForm from "../components/expense-form";
 import { storeExpense } from "../api/requests";
 
@@ -33,12 +33,12 @@ function ManageExpense({ route, navigation }) {
     navigation.goBack();
   }
 
-  function saveHandler(expenseData) {
+  async function saveHandler(expenseData) {
     if (isEditing) {
       expensesCtx.updateExpense(editedExpenseId, expenseData);
     } else {
-      storeExpense(expenseData);
-      expensesCtx.addExpense(expenseData);
+      const id = await storeExpense(expenseData);
+      expensesCtx.addExpense({...expenseData, id});
     }
     navigation.goBack();
   }
