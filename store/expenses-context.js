@@ -1,5 +1,7 @@
 import React, { createContext, useReducer, useEffect } from 'react';
-import { getExpenses } from '../api/requests'; 
+
+// @ts-ignore
+import { getExpenses, updateExpense as updateExpenseApi, deleteExpense as deleteExpenseApi } from '../api/requests'; 
 
 export const ExpensesContext = createContext({
   expenses: [],
@@ -41,12 +43,14 @@ function ExpensesContextProvider({ children }) {
     dispatch({ type: 'ADD', payload: expenseData });
   }
 
-  function deleteExpense(id) {
+  async function deleteExpense(id) {
+    await deleteExpenseApi(id);
     // @ts-ignore
     dispatch({ type: 'DELETE', payload: id });
   }
 
-  function updateExpense(id, expenseData) {
+  async function updateExpense(id, expenseData) {
+    await updateExpenseApi(id, expenseData);
     // @ts-ignore
     dispatch({ type: 'UPDATE', payload: { id, data: expenseData } });
   }

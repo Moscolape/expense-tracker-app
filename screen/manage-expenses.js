@@ -5,7 +5,11 @@ import IconButton from "../components/ui/icon-button";
 import { GlobalColors } from "../constants/colors";
 
 import ExpenseForm from "../components/expense-form";
-import { storeExpense } from "../api/requests";
+import {
+  storeExpense,
+  updateExpense as updateExpenseApi,
+  deleteExpense as deleteExpenseApi,
+} from "../api/requests";
 
 function ManageExpense({ route, navigation }) {
   const expensesCtx = useContext(ExpensesContext);
@@ -24,7 +28,8 @@ function ManageExpense({ route, navigation }) {
     });
   }, [navigation, isEditing]);
 
-  function deleteExpenseHandler() {
+  async function deleteExpenseHandler() {
+    await deleteExpenseApi(editedExpenseId);
     expensesCtx.deleteExpense(editedExpenseId);
     navigation.goBack();
   }
@@ -35,10 +40,11 @@ function ManageExpense({ route, navigation }) {
 
   async function saveHandler(expenseData) {
     if (isEditing) {
+      await updateExpenseApi(editedExpenseId, expenseData);
       expensesCtx.updateExpense(editedExpenseId, expenseData);
     } else {
       const id = await storeExpense(expenseData);
-      expensesCtx.addExpense({...expenseData, id});
+      expensesCtx.addExpense({ ...expenseData, id });
     }
     navigation.goBack();
   }
@@ -72,15 +78,6 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 24,
     backgroundColor: GlobalColors.colors.primary700,
-  },
-  buttons: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  button: {
-    minWidth: 120,
-    marginHorizontal: 8,
   },
   deleteContainer: {
     marginTop: 16,
